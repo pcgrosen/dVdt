@@ -1,0 +1,69 @@
+body {
+    font-size: 18px;
+    font-family: sans-serif;
+    background: #202020;
+}
+
+button {
+    background: #202020;
+    color: #C00000;
+    border: 0.15rem solid #800000;
+
+    box-sizing: content-box;
+    outline: none;
+
+    padding: 0;
+    overflow: hidden;
+    user-select: none;
+}
+
+button:hover {
+    background: #404040;
+}
+
+button:active  {
+    background: #604040;
+}
+
+.main-image {
+    width: 128px;
+    margin: 10px 10px 20px 10px;
+}
+
+#controls {
+    width: 100%;
+}
+
+.spanning-line-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 5px 0px 10px 0px;
+}
+
+.spanning-line {
+    display: flex;
+    text-align: center;
+    flex-direction: row;
+    width: 100%;
+}
+
+.spanning-line-elm {
+    text-align: center;
+    margin: auto;
+    display: inline-block;
+}
+
+.speed-text {
+    color: #C0C0C0;
+    width: 5em;
+}
+
+.speed-button {
+    height: 1.5em;
+    width: 1.5em;
+}
+
+.full-width {
+    width: 100%;
+}

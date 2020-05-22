@@ -1,0 +1,30 @@
+{
+  "name": "dV/dt",
+  "version": "0.1",
+  "description": "Change video playback speed with ease.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "run_at": "document_end",
+      "js": ["js/content.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": {
+      "16":  "images/dVdt-16.png",
+      "24":  "images/dVdt-24.png",
+      "32":  "images/dVdt-32.png",
+      "36":  "images/dVdt-36.png",
+      "48":  "images/dVdt-48.png",
+      "128": "images/dVdt-128.png",
+      "256": "images/dVdt-256.png"
+    },
+    "default_title": "dV/dt",
+    "default_popup": "html/popup.html"
+  },
+  "manifest_version": 2
+}
