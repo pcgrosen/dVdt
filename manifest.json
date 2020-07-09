@@ -10,9 +10,39 @@
     {
       "matches": ["http://*/*", "https://*/*"],
       "run_at": "document_end",
-      "js": ["js/content.js"]
+      "js": ["js/common.js", "js/content.js"]
     }
   ],
+  "background": {
+    "scripts": ["js/common.js", "js/background.js"],
+    "persistent": false
+  },
+  "commands": {
+    "toggle-enabled": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A"
+      },
+      "description": "Toggle enabled on the current page."
+    },
+    "preset-2": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+2"
+      },
+      "description": "Set speed to 2."
+    },
+    "preset-3": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+3"
+      },
+      "description": "Set speed to 3."
+    },
+    "increment-speed": {
+      "description": "Increment the current speed."
+    },
+    "decrement-speed": {
+      "description": "Decrement the current speed."
+    }
+  },
   "browser_action": {
     "default_icon": {
       "16":  "images/dVdt-16.png",

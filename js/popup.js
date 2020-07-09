@@ -1,88 +1,52 @@
-let PREFIX = "enabled!";
-let ISWHITELIST = "isWhitelist";
-let PLAYBACKRATE = "playbackRate";
-let TOGGLELANG = ["Disable", "Enable"];
+const TOGGLE_LANG = ["Disable", "Enable"];
+const DEFAULT_NAME = "all sites";
+
+var HR = null;
 var currentHost = null;
 
-function makeKey(host) {
-  return PREFIX + host;
-}
-
-function isKey(key) {
-  return key.indexOf(PREFIX) === 0;
-}
-
-function parseKey(key) {
-  return key.substr(PREFIX.length);
-}
-
-function isHostKey(key) {
-  return isKey(key) && parseKey(key) === document.location.host;
-}
-
 function updateSpeedDisplay() {
-  chrome.storage.sync.get(PLAYBACKRATE, function(values) {
-    document.getElementById("current-speed").innerText = values[PLAYBACKRATE].toString() + "x";
-  });
-}
-
-function setSpeed(newSpeed) {
-  var set = {};
-  set[PLAYBACKRATE] = newSpeed;
-  chrome.storage.sync.set(set, function() {
-    updateSpeedDisplay();
-  });
-}
-
-function addSpeed(val) {
-  chrome.storage.sync.get(PLAYBACKRATE, function(values) {
-    var newSpeed = values[PLAYBACKRATE] + val;
-    if (newSpeed <= 0) {
-      return;
-    }
-    setSpeed(newSpeed);
-  });
+  document.getElementById("current-speed").innerText = HR.playbackRate.toString() + "x";
 }
 
 function updateToggleButton() {
-  var hostKey = makeKey(currentHost);
-  chrome.storage.sync.get([ISWHITELIST, hostKey], function(values) {
-    var state;
-    if (values[hostKey] !== undefined) {
-      state = values[hostKey];
-    } else {
-      state = !values[ISWHITELIST];
-    }
-    document.getElementById("toggle-state").innerText = TOGGLELANG[0 + !state];
-    document.getElementById("toggle-host").innerText  = currentHost;
-  });
+  document.getElementById("enabled-state").innerText = TOGGLE_LANG[0 + !HR.enabled];
+
+  var host = HR.hasEnabled ? currentHost : DEFAULT_NAME;
+  document.getElementById("enabled-host").innerText = host;
 }
 
-function toggleEnabled() {
-  var hostKey = makeKey(currentHost);
-  chrome.storage.sync.get([ISWHITELIST, hostKey], function(values) {
-    var state;
-    if (values[hostKey] !== undefined) {
-      state = values[hostKey];
-    } else {
-      state = !values[ISWHITELIST];
-    }
-    var set = {};
-    set[hostKey] = !state;
-    chrome.storage.sync.set(set, function() {
-      updateToggleButton();
-    });
-  });
+function checkDefaults(def) {
+  if (!def.hasEnabled) {
+    def.enabled = false;
+  }
+  if (!def.hasPlaybackRate) {
+    def.playbackRate = 2;
+  }
+  if (!def.hasBlockUpdates) {
+    def.blockUpdates = true;
+  }
 }
 
-document.getElementById("minus-speed").onclick = () => addSpeed(-0.25);
-document.getElementById("plus-speed").onclick  = () => addSpeed( 0.25);
+document.getElementById("minus-speed").onclick = () => HR.addSpeed(-0.25);
+document.getElementById("plus-speed").onclick  = () => HR.addSpeed( 0.25);
 
-document.getElementById("toggle-button").onclick = () => toggleEnabled();
+document.getElementById("enabled-button").onclick = () => HR.toggleEnabled();
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
   currentHost = new window.URL(tabs[0].url).host;
-  updateToggleButton();
+  HostRecord.fromHost(currentHost).then(function(hr) {
+    HR = hr;
+    checkDefaults(HR.fallback);
+    HR.addCallback(function(key, changes) {
+      console.log(key, changes);
+      if ("enabled" in changes) {
+        updateToggleButton();
+      }
+      if ("playbackRate" in changes) {
+        updateSpeedDisplay();
+      }
+    });
+    updateToggleButton();
+    updateSpeedDisplay();
+  });
 });
-
-updateSpeedDisplay();
