@@ -19,7 +19,7 @@ function registerElement(elms) {
   }
   for (let elm of elms) {
     originalSpeeds.set(elm, elm.playbackRate);
-    elm.addEventListener("ratechange", function() {
+	let handler = function(e) {
       if (elm.playbackRate !== HR.playbackRate) {
         originalSpeeds.set(elm, elm.playbackRate);
       }
@@ -29,7 +29,9 @@ function registerElement(elms) {
       if (elm.playbackRate !== HR.playbackRate) {
         elm.playbackRate = HR.playbackRate;
       }
-    });
+    };
+    elm.addEventListener("ratechange", handler);
+	elm.addEventListener("play", handler);
   }
 }
 
@@ -43,12 +45,15 @@ function updateSpeeds() {
 let obs = new window.MutationObserver(function(mutations, observer) {
   for (let i = 0; i < mutations.length; i++) {
     for (let j = 0; j < mutations[i].addedNodes.length; j++) {
+	  let root = mutations[i].addedNodes[j];
       let found = [];
-      if (mutations[i].addedNodes[j].nodeName === "VIDEO") {
-        found.push(mutations[i].addedNodes[j]);
+      if (root.nodeName === "VIDEO") {
+        found.push(root);
       } else {
-        let elms = mutations[i].addedNodes[j].getElementsByTagName("video");
-        found.push(...Array.from(elms));
+	    try {
+            let elms = root.getElementsByTagName("video");
+			found.push(...Array.from(elms));
+		} catch (e) {}
       }
       found.forEach(function(elm) {
         registerElement(elm);

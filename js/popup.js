@@ -38,7 +38,6 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     HR = hr;
     checkDefaults(HR.fallback);
     HR.addCallback(function(key, changes) {
-      console.log(key, changes);
       if ("enabled" in changes) {
         updateToggleButton();
       }
